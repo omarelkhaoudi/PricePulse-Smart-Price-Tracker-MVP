@@ -7,7 +7,7 @@ services:
       PORT: 4000
       DATABASE_URL: /data/pricepulse.sqlite
       CORS_ORIGIN: http://localhost:5173
-      PRICE_SIMULATION_INTERVAL_MS: 30000
+      ENABLE_PRICE_WORKER: "false"
     volumes:
       - api-data:/data
     ports:
@@ -17,6 +17,16 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
+
+  worker:
+    build:
+      context: ./apps/worker
+    environment:
+      API_URL: http://api:4000
+      PRICE_WORKER_INTERVAL_SECONDS: 30
+    depends_on:
+      api:
+        condition: service_healthy
 
   web:
     build:

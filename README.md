@@ -5,6 +5,7 @@ PricePulse est un MVP full-stack permettant de suivre l'evolution simulee du pri
 ## Stack
 
 - Backend: Node.js, TypeScript, Express, SQLite, Zod
+- Worker: Python, bibliotheque standard
 - Frontend: React, TypeScript, Vite, TanStack Query
 - Tests: Vitest, Supertest, Playwright
 - Infra: Docker, Docker Compose
@@ -41,6 +42,7 @@ Commandes utiles:
 
 ```bash
 npm run test:api
+npm run test:worker
 npm run test:e2e
 ```
 
@@ -51,9 +53,12 @@ Le backend expose une API REST volontairement compacte:
 - `GET /api/products` avec pagination et filtre de tendance.
 - `POST /api/products` avec validation stricte de l'URL, du nom et du prix initial.
 - `DELETE /api/products/:id` pour retirer un produit du suivi.
+- `PATCH /api/products/:id/price` pour les mises a jour envoyees par le worker Python.
 - `POST /api/products/:id/simulate` pour declencher une variation de prix manuelle utile en demo/test.
 
 Les donnees sont stockees dans SQLite pour garder le MVP simple a lancer, y compris via Docker. La logique metier est separee entre validation, repository et simulation de prix afin de garder les tests unitaires rapides et deterministes.
+
+Le processus de fond est un worker Python separe (`apps/worker`). En Docker, l'API desactive son simulateur interne et laisse ce worker calculer les variations de prix puis pousser les nouvelles valeurs via l'API. Ce choix montre une architecture plus proche d'un systeme reel: API transactionnelle d'un cote, traitement asynchrone de l'autre.
 
 Le frontend utilise TanStack Query pour les appels asynchrones, l'invalidation du cache apres ajout/suppression, et des etats clairs de chargement/erreur. Le dashboard affiche le prix initial, le prix courant, la tendance et un historique recent sous forme de barres.
 

@@ -59,4 +59,23 @@ describe('product API', () => {
     const listResponse = await request(app).get('/api/products');
     expect(listResponse.body.data).toHaveLength(0);
   });
+
+  it('updates a product price from the worker endpoint', async () => {
+    const createResponse = await request(app)
+      .post('/api/products')
+      .send({
+        name: 'Desk Lamp',
+        url: 'https://shop.example.com/lamp',
+        currentPrice: 80
+      });
+
+    const updateResponse = await request(app)
+      .patch(`/api/products/${createResponse.body.id}/price`)
+      .send({ currentPrice: 72 })
+      .expect(200);
+
+    expect(updateResponse.body.currentPrice).toBe(72);
+    expect(updateResponse.body.trend).toBe('down');
+    expect(updateResponse.body.variationPercent).toBe(-10);
+  });
 });

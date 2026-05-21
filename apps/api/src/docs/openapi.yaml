@@ -63,6 +63,34 @@ paths:
           description: Product deleted
         "404":
           description: Product not found
+  /api/products/{id}/price:
+    patch:
+      summary: Update a product price from the background worker
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPrice]
+              properties:
+                currentPrice:
+                  type: number
+                  minimum: 0.01
+      responses:
+        "200":
+          description: Product updated
+        "400":
+          description: Invalid input
+        "404":
+          description: Product not found
   /api/products/{id}/simulate:
     post:
       summary: Simulate one price update for a product

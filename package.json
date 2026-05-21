@@ -13,8 +13,9 @@
   "scripts": {
     "dev": "concurrently \"npm run dev -w apps/api\" \"npm run dev -w apps/web\"",
     "build": "npm run build -w apps/api && npm run build -w apps/web",
-    "test": "npm run test -w apps/api && npm run test:e2e",
+    "test": "npm run test -w apps/api && npm run test:worker && npm run test:e2e",
     "test:api": "npm run test -w apps/api",
+    "test:worker": "python -m unittest discover apps/worker/tests",
     "test:e2e": "playwright test",
     "lint": "npm run lint -w apps/api && npm run lint -w apps/web"
   },

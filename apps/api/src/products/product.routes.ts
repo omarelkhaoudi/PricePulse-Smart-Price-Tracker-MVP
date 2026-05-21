@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import type { ProductRepository } from './product.repository.js';
 import { simulateNextPrice } from './price-simulator.js';
-import { createProductSchema, productQuerySchema } from './product.schema.js';
+import { createProductSchema, productQuerySchema, updateProductPriceSchema } from './product.schema.js';
 
 export function createProductRouter(repository: ProductRepository) {
   const router = Router();
@@ -38,6 +38,23 @@ export function createProductRouter(repository: ProductRepository) {
 
       const updatedProduct = repository.updatePrice(params.id, simulateNextPrice(product.currentPrice));
       res.json(updatedProduct);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.patch('/:id/price', (req, res, next) => {
+    try {
+      const params = z.object({ id: z.string().uuid() }).parse(req.params);
+      const payload = updateProductPriceSchema.parse(req.body);
+      const product = repository.findById(params.id);
+
+      if (!product) {
+        res.status(404).json({ message: 'Product not found' });
+        return;
+      }
+
+      res.json(repository.updatePrice(params.id, payload.currentPrice));
     } catch (error) {
       next(error);
     }

@@ -14,5 +14,10 @@ export const productQuerySchema = z.object({
   trend: z.enum(['up', 'down', 'stable']).optional()
 });
 
+export const updateProductPriceSchema = z.object({
+  currentPrice: z.coerce.number().positive().max(1_000_000)
+});
+
 export type CreateProductInput = z.infer<typeof createProductSchema>;
+export type UpdateProductPriceInput = z.infer<typeof updateProductPriceSchema>;
 export type ProductTrend = 'up' | 'down' | 'stable';
