@@ -1,0 +1,25 @@
+{
+  "name": "pricepulse-mvp",
+  "private": true,
+  "version": "1.0.0",
+  "description": "PricePulse - Smart Price Tracker MVP",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w apps/api\" \"npm run dev -w apps/web\"",
+    "build": "npm run build -w apps/api && npm run build -w apps/web",
+    "test": "npm run test -w apps/api && npm run test:e2e",
+    "test:api": "npm run test -w apps/api",
+    "test:e2e": "playwright test",
+    "lint": "npm run lint -w apps/api && npm run lint -w apps/web"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "concurrently": "^9.1.2"
+  }
+}
